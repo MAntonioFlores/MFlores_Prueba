@@ -55,13 +55,67 @@ namespace Presentacion.Controllers
                         if (linea != "")
                         {
                             string[] fila = linea.Split(separador);
-                            charger.id = fila[0];
+
+                            charger.id = null;
+
+                            if (fila[0] != "" || fila[0] != null)
+                            {
+                                charger.id = fila[0];
+                            }
+
                             charger.Company = new Modelo.Company();
-                            charger.Company.company_name = fila[1];
-                            charger.Company.company_id = fila[2];
-                            charger.amount = Convert.ToDecimal(fila[3]);
+
+                            company.company_name = null;
+
+                            if (fila[1] != "" || fila[1] != null)
+                            {
+                                company.company_name = fila[1];
+
+                            }
+                            
+                            charger.Company.company_name = null;
+
+                            if (fila[1] != "" || fila[1] != null)
+                            {
+                                company.company_name = fila[1];
+
+                            }
+
+                            charger.Company.company_id = null;
+
+                            if (fila[2] != "" || fila[2] != null)
+                            {
+                                company.company_name = fila[2];
+
+                            }
+                            company.company_id = null;
+
+                            if (fila[2] != "" || fila[2] != null)
+                            {
+                                company.company_name = fila[2];
+
+                            }
+                            charger.amount = 0;
+
+                            if (fila[1] != "" || fila[1] != null)
+                            {
+                                charger.amount = Convert.ToDecimal(fila[3]);
+
+                            }
                             charger.status = fila[4];
+
+                            if (fila[1] != "" || fila[1] != null)
+                            {
+                                company.company_name = fila[1];
+
+                            }
                             charger.created_at = Convert.ToDateTime(fila[5]);
+
+                            if (fila[1] != "" || fila[1] != null)
+                            {
+                                company.company_name = fila[1];
+
+                            }
                             charger.updated_at = null;
 
                             if (fila[6] != "")
@@ -69,8 +123,12 @@ namespace Presentacion.Controllers
                                 charger.updated_at = Convert.ToDateTime(fila[6]);
                             }
 
+                            if (company.company_id == "" || company.company_id != "" && company.company_name == "" || company.company_name != "")
+                            {
+                                Negocio.Company.Add(company);
 
-                            Negocio.Company.Add(company);
+                            }
+
 
                             Negocio.Charger.Add(charger);
                         }
