@@ -14,6 +14,7 @@ namespace Presentacion.Controllers
 {
     public class ArchivoController : Controller
     {
+        private readonly IWebHostEnvironment _webHostEnvironment;
         public IActionResult Archivo()
         {
 
@@ -24,8 +25,10 @@ namespace Presentacion.Controllers
         public IActionResult Archivo(IFormFile ArchivoCSV)
         {
 
+
             Modelo.Charger charger = new Modelo.Charger();
             Modelo.Company company = new Modelo.Company();
+            List<string> listaErrores = new List<string>();
 
             if (ArchivoCSV == null || ArchivoCSV.Length == 0)
             {
@@ -34,8 +37,6 @@ namespace Presentacion.Controllers
             }
 
             string fileName = Path.GetFileName(ArchivoCSV.FileName);
-
-            List<string> errores = new List<string>();
 
             using (var stream = new MemoryStream())
             {
@@ -61,128 +62,152 @@ namespace Presentacion.Controllers
                     // Si el archivo no tiene encabezado, elimina la siguiente línea
                     parser.ReadLine(); // Leer la primera línea pero descartarla porque es el encabezado
 
+                    int NumeroRegistro = 1;
+
                     while ((linea = parser.ReadLine()) != null)
                     {
                         if (linea != "")
                         {
                             string[] fila = linea.Split(separador);
 
+                            //Remplazar todo estoooo --------------------------
                             charger.id = null;
 
                             if (fila[0] != "" || fila[0] != null)
                             {
                                 charger.id = fila[0];
                             }
+                            //------------------------------------
+
+
+                            // POR ESTO -------------------------
+                            charger.id = (fila[0] != "" || fila[0] != null) ? fila[0] : ""; //Acordarse del valor que se ponga por defecto
+                            // ---------------------------------
 
                             charger.Company = new Modelo.Company();
 
-                            company.company_name = null;
+                            company.company_name = (fila[1] != "" || fila[1] != null) ? fila[1] : "";
 
-                            if (fila[1] != "" || fila[1] != null)
-                            {
-                                company.company_name = fila[1];
+                            charger.Company.company_name = (fila[1] != "" || fila[1] != null) ? fila[1] : "";
+                                
+                            company.company_id = (fila[2] != "" || fila[2] != null) ? fila[2] : "";
 
-                            }
+                            charger.Company.company_id = (fila[2] != "" || fila[2] != null) ? fila[2] : "";
 
-                            charger.Company.company_name = null;
+                            charger.amount = (Convert.ToDecimal(fila[3]) != 0) ? Convert.ToDecimal(fila[3]) : 0;
 
-                            if (fila[1] != "" || fila[1] != null)
-                            {
-                                charger.Company.company_name = fila[1];
+                            charger.status = (fila[4] != "" || fila[4] != null) ? fila[4] : "";
 
-                            }
+                            charger.created_at = string.IsNullOrWhiteSpace(fila[5]) ? default : Convert.ToDateTime(fila[5]);
 
-                            charger.Company.company_id = null;
+                            charger.updated_at = string.IsNullOrWhiteSpace(fila[6]) ? default : Convert.ToDateTime(fila[6]);
 
-                            if (fila[2] != "" || fila[2] != null)
-                            {
-                                charger.Company.company_id = fila[2];
+                            //if (company.company_id != null || company.company_id != "" && company.company_name != null || company.company_name != "")
+                            //{
+                            //    Negocio.Company.Add(company);
 
-                            }
-                            company.company_id = null;
+                            //}
 
-                            if (fila[2] != "" || fila[2] != null)
-                            {
-                                company.company_id = fila[2];
+                            //REMPLEAZAR ESTO *----------------------------------------------------------------------
+                            //if (charger.id != null || charger.id != "" && charger.amount != null || charger.amount != 0 && charger.status != null || charger.status != ""
+                            //    && charger.created_at != null || charger.created_at != Convert.ToDateTime("") && charger.updated_at != Convert.ToDateTime(null)
+                            //    || charger.updated_at != Convert.ToDateTime(""))
+                            //{
 
-                            }
-                            charger.amount = 0;
+                            //    Negocio.Charger.Add(charger);
+                            //}
 
-                            if (fila[3] != "" || fila[3] != null)
-                            {
-                                charger.amount = Convert.ToDecimal(fila[3]);
+                            //----------------------------*
 
-                            }
-                            charger.status = null;
+                            //POR ESTO -----------------------
+                            string mensajeError = Validar(NumeroRegistro, charger, company);
 
-                            if (fila[4] != "" || fila[4] != null)
-                            {
-                                charger.status = fila[4];
-
-                            }
-
-                            charger.created_at = Convert.ToDateTime(fila[5]);
-
-
-                            charger.updated_at = null;
-
-                            if (fila[6] != "")
-                            {
-                                charger.updated_at = Convert.ToDateTime(fila[6]);
-                            }
-
-                            if (company.company_id != null || company.company_id != "" && company.company_name != null || company.company_name != "")
+                            if (mensajeError == "")
                             {
                                 Negocio.Company.Add(company);
 
-                            }
-                            if (charger.id != null || charger.id != "" && charger.amount != null || charger.amount != 0 && charger.status != null || charger.status != "" 
-                                && charger.created_at != null || charger.created_at != Convert.ToDateTime("") && charger.updated_at != Convert.ToDateTime(null)
-                                || charger.updated_at != Convert.ToDateTime(""))
-                            {
-
                                 Negocio.Charger.Add(charger);
                             }
-                            //else
-                            //{
-                            //    errores.Add(string.Format(",", fila));
-                            //}
+                            else
+                            {
+                                listaErrores.Add(mensajeError);
+                            }
                         }
-                        //if (errores.Count > 0)
-                        //{
-                        //    string errorFilePath = Path.Combine(_webHostEnvironment.WebRootPath, "Files", "logErrores.txt");
-                        //    Directory.CreateDirectory(Path.GetDirectoryName(errorFilePath));
 
-                        //    System.IO.File.WriteAllLinesAsync(errorFilePath, errores, Encoding.UTF8);
-                        //    HttpContext.Session.SetString("RutaDescarga", errorFilePath);
-                        //}
+                    } //LLAVE DE CIERRE DEL WHILE
+
+
+
+                    //ERROR
+
+                    if (listaErrores.Count > 0)
+                    {
+                        string errorFilePath = Path.Combine(_webHostEnvironment.WebRootPath, "~/Files", "logErrores.txt");
+                        //COMO INYECTAR ESTA DEPENDENCIA
+                        Directory.CreateDirectory(Path.GetDirectoryName(errorFilePath));
+
+                        System.IO.File.WriteAllLinesAsync(errorFilePath, listaErrores, Encoding.UTF8);
+                        HttpContext.Session.SetString("RutaDescarga", errorFilePath);
                     }
 
-                        return View();
+                    ViewBag.Text = "El Archivo contiene errores";
+                    return PartialView("Modal");
+                    return View(); //MODAL //MODAL IF con RAZOR (Session si tiene tiene info (btn de descargar) ("Ocurrieron errores")
+                                   //Todos los registros se guardaron con exito
                 }
             }
         }
 
-        //[HttpPost]
-        //public IActionResult GetAll(ML.Empresa empresa)
-        //{
-        //    HttpPostedFileBase file = Request.Files["ArchivoErrorTxt"];
+        public string Validar(int numeroRegistro, Modelo.Charger charger, Modelo.Company company)
+        {
+            string MensajeError = "";
 
-        //    ML.Result resultError = Readfile(file);
-        //    if (resultError.Objects.Count > 0)
-        //    {
-        //        string fileError = Server.MapPath(@"~\Files\logErrores.txt");
-        //        using (Streamwriter writer = new Streamwriter(fileError))
-        //        {
-        //            foreach (string In in resultError.Objects)
-        //            {
-        //                writer.WriteLine(ln);
-        //            }
-        //        }
-        //        HttpContext.Session.SetString("RutaDescarga", fileError);
-        //        ViewBag.Mensaje = "Ocurrio un error al insertar las empresas, para mayor información descargue el Archivo Log.txt";
+            if (charger.id == "")
+            {
+                MensajeError += "Falta el IdCharger, ";
+            }
+            if (company.company_name == "" || charger.Company.company_name == "")
+            {
+                MensajeError += "Falta el CompanyName, ";
+            }
+            if (charger.Company.company_id == "" || company.company_id == "")
+            {
+                MensajeError += "Falta el CompanyId, ";
+            }
+            if (charger.amount == 0)
+            {
+                MensajeError += "Falta el Amount, ";
+            }
+            if (charger.status == "")
+            {
+                MensajeError += "Falta el Status, ";
+            }
+            if (charger.created_at == Convert.ToDateTime(""))
+            {
+                MensajeError += "Falta el Created_at, ";
+            }
+            if (charger.updated_at == Convert.ToDateTime(""))
+            {
+                MensajeError += "Falta el Updated_at, ";
+            }
+            //CON TODOS LOS DEMAS CAMPOS
 
-        //    }
-        //}
+            if (MensajeError != "")
+            {
+                MensajeError += " En el registro N:" + numeroRegistro.ToString();
+            }
+
+            return MensajeError;
+        }
+
+        //AQUI METER EL METODO DE DOWNLOAD
+
+        [HttpGet]
+        public IActionResult Download(string pathError)
+        {
+            HttpContext.Session.SetString("Ruta", pathError);
+            string contentType = "text/plain";
+            return File(pathError, contentType, Path.GetFileName(pathError));
+        }
     }
 }
