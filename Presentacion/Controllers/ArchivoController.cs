@@ -97,10 +97,10 @@ namespace Presentacion.Controllers
                             charger.amount = (Convert.ToDecimal(fila[3]) != 0) ? Convert.ToDecimal(fila[3]) : 0;
 
                             charger.status = (fila[4] != "" || fila[4] != null) ? fila[4] : "";
+                            string format = "dd/MM/yyyy";
+                            charger.created_at = string.IsNullOrWhiteSpace(fila[5]) ? default : DateTime.ParseExact(fila[5],format, CultureInfo.InvariantCulture);
 
-                            charger.created_at = string.IsNullOrWhiteSpace(fila[5]) ? default : Convert.ToDateTime(fila[5]);
-
-                            charger.updated_at = string.IsNullOrWhiteSpace(fila[6]) ? default : Convert.ToDateTime(fila[6]);
+                            charger.updated_at = string.IsNullOrWhiteSpace(fila[6]) ? null : Convert.ToDateTime(fila[6]);
 
                             //if (company.company_id != null || company.company_id != "" && company.company_name != null || company.company_name != "")
                             //{
@@ -182,11 +182,11 @@ namespace Presentacion.Controllers
             {
                 MensajeError += "Falta el Status, ";
             }
-            if (charger.created_at == Convert.ToDateTime(""))
+            if (charger.created_at == Convert.ToDateTime(null))
             {
                 MensajeError += "Falta el Created_at, ";
             }
-            if (charger.updated_at == Convert.ToDateTime(""))
+            if (charger.updated_at == Convert.ToDateTime(null))
             {
                 MensajeError += "Falta el Updated_at, ";
             }
