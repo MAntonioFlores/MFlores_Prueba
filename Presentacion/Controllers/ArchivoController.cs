@@ -98,7 +98,7 @@ namespace Presentacion.Controllers
 
                             charger.status = (fila[4] != "" || fila[4] != null) ? fila[4] : "";
 
-                            charger.created_at = (Convert.ToDateTime(fila[5]) != null) ? Convert.ToDateTime(fila[5]) : DateTime.Parse(fila[5]);
+                            charger.created_at = (Convert.ToDateTime(fila[5]) != null) ? Convert.ToDateTime(fila[5]) : default;
 
                             charger.updated_at = string.IsNullOrWhiteSpace(fila[6]) ? null : Convert.ToDateTime(fila[6]);
 
@@ -209,5 +209,6 @@ namespace Presentacion.Controllers
             string contentType = "text/plain";
             return File(pathError, contentType, Path.GetFileName(pathError));
         }
+
     }
 }
