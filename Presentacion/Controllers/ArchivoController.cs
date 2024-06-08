@@ -72,7 +72,7 @@ namespace Presentacion.Controllers
                                 company.company_name = fila[1];
 
                             }
-                            
+
                             charger.Company.company_name = null;
 
                             if (fila[1] != "" || fila[1] != null)
@@ -97,23 +97,23 @@ namespace Presentacion.Controllers
                             }
                             charger.amount = 0;
 
-                            if (fila[1] != "" || fila[1] != null)
+                            if (fila[3] != "" || fila[3] != null)
                             {
                                 charger.amount = Convert.ToDecimal(fila[3]);
 
                             }
-                            charger.status = fila[4];
+                            charger.status = null;
 
-                            if (fila[1] != "" || fila[1] != null)
+                            if (fila[4] != "" || fila[4] != null)
                             {
-                                company.company_name = fila[1];
+                                charger.status = fila[4];
 
                             }
-                            charger.created_at = Convert.ToDateTime(fila[5]);
+                            charger.created_at = ;
 
-                            if (fila[1] != "" || fila[1] != null)
+                            if (fila[5] != "" || fila[5] != null)
                             {
-                                company.company_name = fila[1];
+                                charger.created_at = Convert.ToDateTime(fila[5]);
 
                             }
                             charger.updated_at = null;
@@ -123,7 +123,7 @@ namespace Presentacion.Controllers
                                 charger.updated_at = Convert.ToDateTime(fila[6]);
                             }
 
-                            if (company.company_id == "" || company.company_id != "" && company.company_name == "" || company.company_name != "")
+                            if (company.company_id == null || company.company_id != "" && company.company_name != null || company.company_name != "")
                             {
                                 Negocio.Company.Add(company);
 
