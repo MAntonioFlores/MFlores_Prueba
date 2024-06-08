@@ -1,10 +1,14 @@
 ﻿using CsvHelper;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Formats.Asn1;
 using System.Globalization;
 using System.IO;
+using System.Net.Sockets;
+using System.Text;
 
 namespace Presentacion.Controllers
 {
@@ -31,6 +35,8 @@ namespace Presentacion.Controllers
 
             string fileName = Path.GetFileName(ArchivoCSV.FileName);
 
+            List<string> errores = new List<string>();
+
             using (var stream = new MemoryStream())
             {
                 ArchivoCSV.CopyTo(stream);
@@ -45,7 +51,10 @@ namespace Presentacion.Controllers
 
                     // Ignorar la primera línea si es el encabezado
                     if (!parser.EndOfData)
+                    {
+
                         parser.ReadLine();
+                    }
 
                     string separador = ",";
                     string linea;
@@ -79,7 +88,7 @@ namespace Presentacion.Controllers
 
                             if (fila[1] != "" || fila[1] != null)
                             {
-                                company.company_name = fila[1];
+                                charger.Company.company_name = fila[1];
 
                             }
 
@@ -87,14 +96,14 @@ namespace Presentacion.Controllers
 
                             if (fila[2] != "" || fila[2] != null)
                             {
-                                company.company_name = fila[2];
+                                charger.Company.company_id = fila[2];
 
                             }
                             company.company_id = null;
 
                             if (fila[2] != "" || fila[2] != null)
                             {
-                                company.company_name = fila[2];
+                                company.company_id = fila[2];
 
                             }
                             charger.amount = 0;
@@ -127,17 +136,53 @@ namespace Presentacion.Controllers
                                 Negocio.Company.Add(company);
 
                             }
-                            if (charger.id != null || charger.id != "" && charger.amount != null || charger.amount != 0 && charger.status != null || charger.status != "" && charger.created_at != null && charger.updated_at != null && charger.Company.company_id != null || charger.Company.company_id != "")
+                            if (charger.id != null || charger.id != "" && charger.amount != null || charger.amount != 0 && charger.status != null || charger.status != "" 
+                                && charger.created_at != null || charger.created_at != Convert.ToDateTime("") && charger.updated_at != Convert.ToDateTime(null)
+                                || charger.updated_at != Convert.ToDateTime(""))
                             {
 
                                 Negocio.Charger.Add(charger);
                             }
+                            //else
+                            //{
+                            //    errores.Add(string.Format(",", fila));
+                            //}
                         }
+                        //if (errores.Count > 0)
+                        //{
+                        //    string errorFilePath = Path.Combine(_webHostEnvironment.WebRootPath, "Files", "logErrores.txt");
+                        //    Directory.CreateDirectory(Path.GetDirectoryName(errorFilePath));
+
+                        //    System.IO.File.WriteAllLinesAsync(errorFilePath, errores, Encoding.UTF8);
+                        //    HttpContext.Session.SetString("RutaDescarga", errorFilePath);
+                        //}
                     }
 
-                    return View();
+                        return View();
                 }
             }
         }
+
+        //[HttpPost]
+        //public IActionResult GetAll(ML.Empresa empresa)
+        //{
+        //    HttpPostedFileBase file = Request.Files["ArchivoErrorTxt"];
+
+        //    ML.Result resultError = Readfile(file);
+        //    if (resultError.Objects.Count > 0)
+        //    {
+        //        string fileError = Server.MapPath(@"~\Files\logErrores.txt");
+        //        using (Streamwriter writer = new Streamwriter(fileError))
+        //        {
+        //            foreach (string In in resultError.Objects)
+        //            {
+        //                writer.WriteLine(ln);
+        //            }
+        //        }
+        //        HttpContext.Session.SetString("RutaDescarga", fileError);
+        //        ViewBag.Mensaje = "Ocurrio un error al insertar las empresas, para mayor información descargue el Archivo Log.txt";
+
+        //    }
+        //}
     }
 }

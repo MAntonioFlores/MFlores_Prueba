@@ -15,6 +15,17 @@
         </div>
     }
 
+    @* <div class="container">
+        <div style="margin-top: 50px">
+            @if (HttpContext.Session.SetString("DownloadPath") != null)
+            {
+                <div col-md-1>
+                    @Html.ActionLink("Dowload log .txt", "Dowloard", "Archivo", htmlAttributes: new { @class = "btn btn-danger" })
+                </div>
+            }
+        </div>
+    </div> *@
+
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
 <script>  
