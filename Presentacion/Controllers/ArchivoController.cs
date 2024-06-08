@@ -24,7 +24,7 @@ namespace Presentacion.Controllers
             Modelo.Company company = new Modelo.Company();
 
             if (ArchivoCSV == null || ArchivoCSV.Length == 0)
-                return BadRequest("No file selected for upload...");
+                return BadRequest("No seleccionaste un archivo a subir...");
 
             string fileName = Path.GetFileName(ArchivoCSV.FileName);
 
@@ -47,7 +47,6 @@ namespace Presentacion.Controllers
                     string separador = ",";
                     string linea;
                     // Si el archivo no tiene encabezado, elimina la siguiente línea
-                    //System.IO.StreamReader archivo = new System.IO.StreamReader(fileName);
                     parser.ReadLine(); // Leer la primera línea pero descartarla porque es el encabezado
 
                     while ((linea = parser.ReadLine()) != null)
@@ -109,13 +108,10 @@ namespace Presentacion.Controllers
                                 charger.status = fila[4];
 
                             }
-                            charger.created_at = ;
 
-                            if (fila[5] != "" || fila[5] != null)
-                            {
-                                charger.created_at = Convert.ToDateTime(fila[5]);
+                            charger.created_at = Convert.ToDateTime(fila[5]);
 
-                            }
+
                             charger.updated_at = null;
 
                             if (fila[6] != "")
@@ -123,14 +119,16 @@ namespace Presentacion.Controllers
                                 charger.updated_at = Convert.ToDateTime(fila[6]);
                             }
 
-                            if (company.company_id == null || company.company_id != "" && company.company_name != null || company.company_name != "")
+                            if (company.company_id != null || company.company_id != "" && company.company_name != null || company.company_name != "")
                             {
                                 Negocio.Company.Add(company);
 
                             }
+                            if (charger.id != null || charger.id != "" && charger.amount != null || charger.amount != 0 && charger.status != null || charger.status != "" && charger.created_at != null && charger.updated_at != null && charger.Company.company_id != null || charger.Company.company_id != "")
+                            {
 
-
-                            Negocio.Charger.Add(charger);
+                                Negocio.Charger.Add(charger);
+                            }
                         }
                     }
 

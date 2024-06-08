@@ -9,7 +9,7 @@ namespace Negocio
 {
     public class Company
     {
-        public static (bool, string, Exception) Add(Datos.Company company)
+        public static (bool, string, Exception) Add(Modelo.Company company)
         {
 			try
 			{
