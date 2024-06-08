@@ -97,8 +97,8 @@ namespace Presentacion.Controllers
                             charger.amount = (Convert.ToDecimal(fila[3]) != 0) ? Convert.ToDecimal(fila[3]) : 0;
 
                             charger.status = (fila[4] != "" || fila[4] != null) ? fila[4] : "";
-                            string format = "dd/MM/yyyy";
-                            charger.created_at = string.IsNullOrWhiteSpace(fila[5]) ? default : DateTime.ParseExact(fila[5],format, CultureInfo.InvariantCulture);
+
+                            charger.created_at = (Convert.ToDateTime(fila[5]) != null) ? Convert.ToDateTime(fila[5]) : DateTime.Parse(fila[5]);
 
                             charger.updated_at = string.IsNullOrWhiteSpace(fila[6]) ? null : Convert.ToDateTime(fila[6]);
 
