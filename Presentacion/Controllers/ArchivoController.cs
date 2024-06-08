@@ -24,7 +24,10 @@ namespace Presentacion.Controllers
             Modelo.Company company = new Modelo.Company();
 
             if (ArchivoCSV == null || ArchivoCSV.Length == 0)
+            {
+
                 return BadRequest("No seleccionaste un archivo a subir...");
+            }
 
             string fileName = Path.GetFileName(ArchivoCSV.FileName);
 
@@ -135,8 +138,6 @@ namespace Presentacion.Controllers
                     return View();
                 }
             }
-
-
         }
     }
 }
